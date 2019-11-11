@@ -20,6 +20,6 @@ const options = {
   priority: 'high',
   timeToLive: 60 * 60 * 24, //1 day
 };
-console.log("Sending");
+
 firebase.messaging().sendToDevice(firebaseToken, payload, options);
-console.log("After sending");
+console.log("Notification sent");
