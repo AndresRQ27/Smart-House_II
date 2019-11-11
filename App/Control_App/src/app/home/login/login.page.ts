@@ -25,31 +25,28 @@ export class LoginPage {
    onConfirm(){
 
 
-    const params = new HttpParams().set('user', this.inputUser).set('password', this.inputPassword);
+    // const params = new HttpParams().set('user', this.inputUser).set('password', this.inputPassword);
 
-    this.http.get('http://' + this.connectionServices.getIP() + ':' + 
-    this.connectionServices.getPort() + '/', {params}).subscribe((data:any) => {
-      console.log(data);
-      this.dataObject = data;
-      this.authentication = this.dataObject['auth'] ? true : false;
+    // this.http.get('http://' + this.connectionServices.getIP() + ':' + 
+    // this.connectionServices.getPort() + '/', {params}).subscribe((data:any) => {
+    //   console.log(data);
+    //   this.dataObject = data;
+    //   this.authentication = this.dataObject['auth'] ? true : false;
 
-      if (this.authentication === false){
-        this.alertCtrl.create({
-          header: 'Error',
-          message: 'Invalid credentials',
-          buttons: [{text: 'Ok', role: 'cancel'}]
-        }).then(alertEl => {
-          alertEl.present();
-        });
-        return;
-      }
-      this.router.navigate(['/control']);
-    });
+    //   if (this.authentication === false){
+    //     this.alertCtrl.create({
+    //       header: 'Error',
+    //       message: 'Invalid credentials',
+    //       buttons: [{text: 'Ok', role: 'cancel'}]
+    //     }).then(alertEl => {
+    //       alertEl.present();
+    //     });
+    //     return;
+    //   }
+    //   this.router.navigate(['/control']);
+    // });
+    this.router.navigate(['/control']);
   }
 
-  onClear() {
-    this.inputUser = '';
-    this.inputPassword = '';
-  }
 
 }
