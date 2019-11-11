@@ -1,0 +1,17 @@
+{
+  "appId": "com.tec.smarthouseii",
+  "appName": "SmartHouseII",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "linuxAndroidStudioPath":"/opt/android-studio/bin/studio.sh",
+  "android": {
+    "allowMixedContent": true
+  },
+  "server" :{
+    "allowNavigation" : [
+      "*",
+      "http://*"
+    ]
+  }
+}

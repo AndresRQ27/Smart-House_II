@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "212944523865",
+    "firebase_url": "https://smarthouseii.firebaseio.com",
+    "project_id": "smarthouseii",
+    "storage_bucket": "smarthouseii.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:212944523865:android:36259117d2cf1dc51fd748",
+        "android_client_info": {
+          "package_name": "com.tec.smarthouseii"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "212944523865-punagg631p0malhug7metouctgabof3o.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDzbTOtayZs7a2xg4gdXpAncvukdsxR0GY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "212944523865-punagg631p0malhug7metouctgabof3o.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
