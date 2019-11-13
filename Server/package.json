@@ -17,6 +17,7 @@
     "eslint-config-google": "^0.14.0"
   },
   "dependencies": {
-    "express": "^4.17.1"
+    "express": "^4.17.1",
+    "firebase-admin": "^8.7.0"
   }
 }
