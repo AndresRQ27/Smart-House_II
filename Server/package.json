@@ -1,0 +1,22 @@
+{
+  "name": "server-app",
+  "version": "1.0.0",
+  "description": "test server in node.js",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/lnhrt2806/SmartHouseII.git"
+  },
+  "author": "Andres Ramirez Quiros",
+  "license": "ISC",
+  "devDependencies": {
+    "eslint": "^6.6.0",
+    "eslint-config-google": "^0.14.0"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}
