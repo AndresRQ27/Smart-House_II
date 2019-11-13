@@ -4,8 +4,8 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class ConnectionService {
-  private port: string = "5000";
-  private ip: string = "192.168.0.22";
+  private port: string = "8080";
+  private ip: string = "10.23.172.143";
   private user: string;
   private password: string;
 

@@ -1,0 +1,24 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+../lib/../include/libgpio.h
+sys/mman.h
+-
+err.h
+-
+fcntl.h
+-
+unistd.h
+-
+stdio.h
+-
+
+/home/lionheart/Documents/GitHub/SmartHouseII/Driver_Library/lib/libgpio.c
+libgpio.h
+-
+

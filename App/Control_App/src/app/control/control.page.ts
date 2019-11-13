@@ -1,6 +1,7 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, RootRenderer } from '@angular/core';
 import { ConnectionService } from '../connection.service';
 import {HttpClient, HttpParams} from '@angular/common/http';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -10,28 +11,18 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 })
 export class ControlPage{
 
-  houseModel : string = 'assets/house_diagram.png';
-  closedDoor : string = 'assets/closed_door.png';
-  openedDoor : string = 'assets/open_door.png';
   photoImg : string = 'assets/picture.png';
-  lightOn : string = 'warning';
-  lightOff : string = 'medium';
-
-  stateDoor1 : string = this.closedDoor;
-  stateDoor2 : string = this.closedDoor;
-  stateDoor3 : string = this.openedDoor;
-  stateDoor4 : string = this.openedDoor;
-
-  stateRoom1 : string = this.lightOn;
-  stateRoom2 : string = this.lightOn;
-  stateKitchen : string = this.lightOn;
-  stateDiner : string = this.lightOn;
-  stateLivingRoom : string = this.lightOff;
-
   dataObject : any[];
+  iconAlarm = 'notifications';
+  iconLock = 'unlock';
   id : any;
 
-  constructor( private connectionServices: ConnectionService, public http: HttpClient) {
+  constructor( private connectionServices: ConnectionService,
+    private router: Router,
+    public http: HttpClient) {
+
+      
+
   //   this.id = setInterval(() => {
 
   //     const params = new HttpParams().set('update', '');
@@ -57,33 +48,39 @@ export class ControlPage{
   }
   onPhoto(){
     console.log("Photo");
+    this.photoImg = 'http://' + this.connectionServices.getIP() + ':' + 
+    this.connectionServices.getPort() + '/image?' + new Date().getTime();
   }
   onVideo(){
     console.log("Video");
+    window.location.href = 'http://' + this.connectionServices.getIP() + ':5000' + '/';
   }
   onAlarm(){
     console.log("Alarm");
-  }
-  onLock(){
-    console.log("Lock");
-  }
-  onUnlock(){
-    console.log("Unlock");
-  }
-
-  onGardenPhoto() {
-    window.location.href = 'http://' + this.connectionServices.getIP() + ':' + 
-    this.connectionServices.getPort() + '/image';
-    console.log('Photo');
-  }
-
-  requestGet(value: string){
-    const params = new HttpParams().set('led', value);
+    const params = new HttpParams().set('alarm', '');
     this.http.get('http://' + this.connectionServices.getIP() + ':' + 
     this.connectionServices.getPort() + '/', {params}).subscribe((data:any) => {
       console.log(data);
       this.dataObject = data;
-      console.log(this.dataObject['foo']);
+      this.iconAlarm = this.dataObject['state'] ? 'notifications-off' : 'notifications';
+    });
+  }
+  onLock(){
+    console.log("Lock");
+    const params = new HttpParams().set('lock', '');
+    this.http.get('http://' + this.connectionServices.getIP() + ':' + 
+    this.connectionServices.getPort() + '/', {params}).subscribe((data:any) => {
+      console.log(data);
+      this.dataObject = data;
+      this.iconLock = this.dataObject['state'] ? 'lock' : 'unlock';
+    });
+  }
+  onUpdateColor(value){
+    console.log("Lights turned to " + value);
+    const params = new HttpParams().set('light', value);
+    this.http.get('http://' + this.connectionServices.getIP() + ':' + 
+    this.connectionServices.getPort() + '/', {params}).subscribe((data:any) => {
+      console.log(data);
     });
   }
 }
