@@ -58,6 +58,7 @@ export class HomePage implements OnInit{
     PushNotifications.addListener('registration',
       (token : PushNotificationToken) => {
         alert('Push registration success, token: ' + token.value);
+        console.log(token.value)
       }
     );
     

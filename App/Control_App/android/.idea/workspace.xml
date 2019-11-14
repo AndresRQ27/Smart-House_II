@@ -10,21 +10,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f32e1700-8756-4902-85c4-bb3fcb79fb21" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/google-services.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/google-services.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/AndroidManifest.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/src/main/assets/capacitor.config.json" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/assets/capacitor.config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../capacitor.config.json" beforeDir="false" afterPath="$PROJECT_DIR$/../capacitor.config.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../config.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../package-lock.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../resources/android/xml/network_security_config.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../resources/android/xml/network_security_config.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/app/home/home.page.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../src/app/home/home.page.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../src/app/home/login/login.page.ts" beforeDir="false" afterPath="$PROJECT_DIR$/../src/app/home/login/login.page.ts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Driver_Library/build/CMakeFiles/distance.dir/src/main_distance.c.o" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Driver_Library/build/CMakeFiles/distance.dir/src/main_distance.c.o" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Driver_Library/build/distance" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Driver_Library/build/distance" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Driver_Library/src/main_distance.c" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Driver_Library/src/main_distance.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../../../Server/server.js" beforeDir="false" afterPath="$PROJECT_DIR$/../../../Server/server.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/assets/public/home-home-module-es2015.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/assets/public/home-home-module-es2015.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/assets/public/home-home-module-es5.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/assets/public/home-home-module-es5.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/assets/public/home-login-login-module-es2015.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/assets/public/home-login-login-module-es2015.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/assets/public/home-login-login-module-es2015.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/assets/public/home-login-login-module-es2015.js.map" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/assets/public/home-login-login-module-es5.js" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/assets/public/home-login-login-module-es5.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/src/main/assets/public/home-login-login-module-es5.js.map" beforeDir="false" afterPath="$PROJECT_DIR$/app/src/main/assets/public/home-login-login-module-es5.js.map" afterDir="false" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="SHOW_DIALOG" value="false" />
@@ -50,7 +42,7 @@
           <provider editor-type-id="android-manifest" />
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="150">
-              <caret line="10" selection-start-line="10" selection-end-line="10" selection-end-column="43" />
+              <caret line="10" column="43" selection-start-line="10" selection-start-column="43" selection-end-line="10" selection-end-column="43" />
             </state>
           </provider>
         </entry>
@@ -67,7 +59,7 @@
       </list>
     </option>
   </component>
-  <component name="ProjectFrameBounds">
+  <component name="ProjectFrameBounds" extendedState="7">
     <option name="width" value="960" />
     <option name="height" value="1034" />
   </component>
@@ -78,23 +70,8 @@
     </navigator>
     <panes>
       <pane id="Scope" />
+      <pane id="AndroidView" />
       <pane id="ProjectPane" />
-      <pane id="AndroidView">
-        <subPane>
-          <expand>
-            <path>
-              <item name="android" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-            </path>
-            <path>
-              <item name="android" type="1abcf292:AndroidViewProjectNode" />
-              <item name="app" type="feadf853:AndroidModuleNode" />
-              <item name="manifests" type="f94875db:AndroidManifestsGroupNode" />
-            </path>
-          </expand>
-          <select />
-        </subPane>
-      </pane>
       <pane id="PackagesPane" />
     </panes>
   </component>
@@ -223,7 +200,7 @@
       <provider editor-type-id="android-manifest" />
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="150">
-          <caret line="10" selection-start-line="10" selection-end-line="10" selection-end-column="43" />
+          <caret line="10" column="43" selection-start-line="10" selection-start-column="43" selection-end-line="10" selection-end-column="43" />
         </state>
       </provider>
     </entry>

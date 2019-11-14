@@ -40,7 +40,7 @@ firebase.initializeApp({
 
 // token const for auth
 const firebaseToken =
-  "dCkRHXel7-Y:APA91bH-5XebMrTkmm5WU_w8ay1K5PA85h931-s6s-RqLWv9uk24YHjw5MQaksPCWh_4Atdxp5lvGXWpBJDjWCs87jb-rCmmXbzi_MQt80m2f1R5DCaUBWdUp_isEmi2Nj3pcpAwlRHX";
+  "e1ZPKhGkMLw:APA91bFmu-eCHFXk23pNbUdG2ocHKpbN9kAxaJOR3e95Js6YbPmqyBw8DdmS-v1X7rGJ1ejZDH-BxNNPLNTSGg8MqHAyy0ewEsdNsEhg-UiRGuxqG10T0phJWKSH6elnl941b1FDwfDI";
 
 const payload = {
   notification: {
