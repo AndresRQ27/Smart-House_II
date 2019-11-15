@@ -11,20 +11,23 @@ const http = require('http');
 // var for the user
 const hostname = '0.0.0.0';
 const port = 8080;
+const rebounceIP = '192.168.1.103'; // IP of the rebouce server for notifications
 const sensorController = 'distance'; // Executable for the GPIO of the proximity sensor
 const lightsController = 'lights'; // Executable for the GPIO of the led lights
-const buzzerController = 'lock'; // Executable for the GPIO of the buzzer
+const unlockController = 'lock'; // Executable for the GPIO of the buzzer
 
 // Login parameters
 const admin = 'admin';
 const adminPassword = '21232f297a57a5a743894a0e4a801fc3'; // MD5('admin')
 
 // Toggle parameters
-let alarmBool = false;
-let lockBool = false;
-let sensorLastState = true;
-let alarmInterval;
-let alarmBuzzer = false;
+let alarmBool = false; // True if alarm on
+let unlockBool = false; // True if door unlocked
+let sensorLastState = true; // State machine of the last activity by proximity sensor
+let unlockLastState = true;
+let lightsLastState = true;
+let alarmInterval; // setInterval of the alarm
+let alarmBuzzer = false; // True if buzzer on
 
 app.use(function(_req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -47,8 +50,8 @@ app.get('/alarm', (req, res) => {
   toggleAlarm(req, res);
 });
 
-app.get('/lock', (req, res) => {
-  toggleLock(req, res);
+app.get('/unlock', (req, res) => {
+  toggleUnlock(req, res);
 });
 
 // create the http server accepting requests to port 8080
@@ -68,7 +71,7 @@ function param(req, res) {
   //  use the url to parse the requested url and get the param number
   const query = url.parse(req.url, true).query;
   const light = query.light;
-  const lock = query.lock;
+  const unlock = query.lock;
   const alarm = query.alarm;
   const user = query.user;
   const password = query.password;
@@ -77,10 +80,11 @@ function param(req, res) {
     authentication(req, res, user, password);
   } else if (typeof alarm !== 'undefined') {
     toggleAlarm(req, res);
-  } else if (typeof lock !== 'undefined') {
-    toggleLock(req, res);
+  } else if (typeof unlock !== 'undefined') {
+    toggleUnlock(req, res);
   } else if (typeof light !== 'undefined') {
     lights(light);
+    readLights();
   } else {
     console.log('Invalid param');
     res.sendStatus(400);
@@ -136,16 +140,23 @@ function toggleAlarm(_req, res) {
 }
 
 /**
- * Function that toggles the lock
+ * Function that toggles the Unlock
  * @param {*} req: request parameter
  * @param {*} res: response parameter
  */
-function toggleLock(_req, res) {
-  lockBool = !lockBool;
-  console.log(`Lock on: ${lockBool}`);
-  // TODO: implementar lock en hardware
+function toggleUnlock(_req, res) {
+  unlockBool = !unlockBool;
+  console.log(`Unlock on: ${unlockBool}`);
+
+  let unlock = '0'; // Door initally locked
+  if (unlockBool) {
+    unlock = '1'; // Unlock if false
+  }
+
+  exec(`${unlockController} -l ${unlock}`, (_error, _stdout, _stderr) => {});
+
   res.json({
-    state: lockBool
+    state: unlockBool
   });
 }
 
@@ -168,16 +179,13 @@ async function lights(color) {
 async function buzzer() {
   alarmBuzzer = !alarmBuzzer;
   let state = '0';
-  
+
   if (alarmBuzzer) {
     state = '1'; // Buzzer on
     console.log('Buzzzz!');
   }
 
-  exec(
-    `${buzzerController} -a ${state}`,
-    (_error, _stdout, _stderr) => {}
-  );
+  exec(`${unlockController} -a ${state}`, (_error, _stdout, _stderr) => {});
 }
 
 /**
@@ -188,17 +196,65 @@ function readSensor() {
     `${sensorController}`,
     (_error, _stdout, _stderr) => {}
   );
+
   readDistance.on('exit', code => {
     if (code === 1 && sensorLastState) {
       // If state is true, it's a 'new' state
       console.log("You're too close, GET AWAY FROM ME!");
       // Get rebounce to send notifications from other server to phone
-      http.get('http://10.23.172.149:9090/', res => {}).on('error', err => {});
+      http.get(`http://${rebounceIP}:9090/`, res => {}).on('error', err => {});
       sensorLastState = !sensorLastState;
     } else if (code === 0 && !sensorLastState) {
       // If state is false, it's a 'new' state
       console.log('Meh, not close enough');
       sensorLastState = !sensorLastState;
+    }
+  });
+}
+
+/**
+ * Function that read the state lock state
+ * Sends a notification if manually opened the door
+ */
+function readLock() {
+  const readLock = exec(
+    `${sensorController} -r`,
+    (_error, _stdout, _stderr) => {}
+  );
+
+  readLock.on('exit', code => {
+    if (code === 1 && !unlockBool && unlockLastState) {
+      // If unlockBool is false, it was unlocked manually
+      // If unlockLastState is true, it's a 'new' state
+      console.log('Lock opened manually');
+      unlockLastState = !unlockLastState;
+      // Get rebounce to send notifications from other server to phone
+      http
+        .get(`http://${rebounceIP}:9090/unlock`, res => {})
+        .on('error', err => {});
+    } else if (code === 0) {
+      unlockLastState = !unlockLastState;
+    }
+  });
+}
+
+function readLights() { 
+  const readLights = exec(
+    `${lightsController} -r`,
+    (_error, _stdout, _stderr) => {}
+  );
+
+  readLights.on('exit', code => {
+    if (code === 1 && lightsLastState && !alarmBool) {
+      // If lightsLastState is true, it's a 'new' state
+      console.log('Lights on');
+      lightsLastState = !lightsLastState;
+      // Get rebounce to send notifications from other server to phone
+      http
+        .get(`http://${rebounceIP}:9090/lights`, res => {})
+        .on('error', err => {});
+    } else if (code === 0) {
+      lightsLastState = !lightsLastState;
     }
   });
 }
@@ -271,6 +327,7 @@ function sleep(ms) {
  */
 function run() {
   setInterval(readSensor, 500); // in mili-seconds
+  setInterval(readLock, 500);
 }
 
 run();
