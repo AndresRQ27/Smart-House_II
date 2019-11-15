@@ -13,6 +13,7 @@ const hostname = '0.0.0.0';
 const port = 8080;
 const sensorController = 'distance'; // Executable for the GPIO
 const lightsController = 'lights';
+let alarmInterval;
 
 // Login parameters
 const admin = 'admin';
@@ -116,12 +117,13 @@ function toggleAlarm(_req, res) {
   res.json({
     state: alarmBool
   });
-  while (alarmBool) {
-    // Repeats the alarm until is turned off
-    lights(_req, res, 1); // Red light
-    sleep(1000); // Sleeps for 1 second
-    lights(_req, res, 0); // Lights off
-    sleep(1000); // Sleeps for 1 second
+  if (alarmBool) {
+    alarmInterval = setInterval((_req, res) => {
+      lights(_req, res, '1');
+      setTimeout(lights, 1000, _req, res, '0');
+    }, 2000);
+  } else {
+    clearInterval(alarmInterval);
   }
 }
 
@@ -145,7 +147,7 @@ function toggleLock(_req, res) {
  * @param {*} res: response parameter
  * @param {*} color: number of the color choose
  */
-function lights(_req, _res, color) {
+async function lights(_req, res, color) {
   const lightColor = color2Hex(color);
   exec(
     `${lightsController} -c ${lightColor}`,
@@ -203,7 +205,7 @@ function color2Hex(color) {
       return '800080'; // Purple
     case '7':
       console.log('Pink');
-      return 'ffc0cb'; // Pink
+      return 'ff007f'; // Pink
     case '8':
       console.log('White');
       return 'ffffff'; // White
@@ -211,7 +213,7 @@ function color2Hex(color) {
       console.log('Cyan');
       return '00ffff'; // Cyan
     default:
-      console.log('Default');
+      console.log('Off');
       return '000000';
   }
 }
