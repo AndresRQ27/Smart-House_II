@@ -1,45 +1,54 @@
+/* eslint-disable no-unused-vars */
 /* eslint-disable max-len */
 //  include the http and url module
-const url = require("url");
-const express = require("express");
+const url = require('url');
+const express = require('express');
 const app = express();
-const path = require("path");
-const exec = require("child_process").exec;
-const http = require("http");
+const path = require('path');
+const exec = require('child_process').exec;
+const http = require('http');
 
 // var for the user
-const hostname = "0.0.0.0";
+const hostname = '0.0.0.0';
 const port = 8080;
-const sensorController = "distance"; // Executable for the GPIO
+const sensorController = 'distance'; // Executable for the GPIO
+const lightsController = 'lights';
 
 // Login parameters
-const admin = "admin";
-const adminPassword = "21232f297a57a5a743894a0e4a801fc3"; // MD5('admin')
+const admin = 'admin';
+const adminPassword = '21232f297a57a5a743894a0e4a801fc3'; // MD5('admin')
 
 // Toggle parameters
 let alarmBool = false;
 let lockBool = false;
 let sensorLastState = true;
-let lightColor = 0;
 
 app.use(function(_req, res, next) {
-  res.header("Access-Control-Allow-Origin", "*");
+  res.header('Access-Control-Allow-Origin', '*');
   res.header(
-    "Access-Control-Allow-Headers",
-    "Origin, X-Requested-With, Content-Type, Accept"
+    'Access-Control-Allow-Headers',
+    'Origin, X-Requested-With, Content-Type, Accept'
   );
   next();
 });
 
-app.get("/", (req, res) => {
+app.get('/', (req, res) => {
   param(req, res);
 });
 
-app.get("/image", (req, res) => {
+app.get('/image', (req, res) => {
   takePhoto(req, res);
 });
 
-//  create the http server accepting requests to port 8080
+app.get('/alarm', (req, res) => {
+  toggleAlarm(req, res);
+});
+
+app.get('/lock', (req, res) => {
+  toggleLock(req, res);
+});
+
+// create the http server accepting requests to port 8080
 app.listen(port, () => {
   console.log(`Server running at http://${hostname}:${port}/`);
 });
@@ -61,19 +70,16 @@ function param(req, res) {
   const user = query.user;
   const password = query.password;
 
-  if (typeof user !== "undefined" && typeof password !== "undefined") {
+  if (typeof user !== 'undefined' && typeof password !== 'undefined') {
     authentication(req, res, user, password);
-  }
-  if (typeof alarm !== "undefined") {
+  } else if (typeof alarm !== 'undefined') {
     toggleAlarm(req, res);
-  }
-  if (typeof lock !== "undefined") {
+  } else if (typeof lock !== 'undefined') {
     toggleLock(req, res);
-  }
-  if (typeof light !== "undefined") {
+  } else if (typeof light !== 'undefined') {
     lights(req, res, light);
   } else {
-    console.log("Invalid param");
+    console.log('Invalid param');
     res.sendStatus(400);
   }
 }
@@ -87,12 +93,12 @@ function param(req, res) {
  */
 function authentication(_req, res, user, password) {
   if (user === admin && password === adminPassword) {
-    console.log("Authenticated");
+    console.log('Authenticated');
     res.json({
       auth: true
     });
   } else {
-    console.log("Not authenticated");
+    console.log('Not authenticated');
     res.json({
       auth: false
     });
@@ -107,10 +113,16 @@ function authentication(_req, res, user, password) {
 function toggleAlarm(_req, res) {
   alarmBool = !alarmBool;
   console.log(`Alarm on: ${alarmBool}`);
-  // TODO: implementar alarma en hardware
   res.json({
     state: alarmBool
   });
+  while (alarmBool) {
+    // Repeats the alarm until is turned off
+    lights(_req, res, 1); // Red light
+    sleep(1000); // Sleeps for 1 second
+    lights(_req, res, 0); // Lights off
+    sleep(1000); // Sleeps for 1 second
+  }
 }
 
 /**
@@ -134,7 +146,11 @@ function toggleLock(_req, res) {
  * @param {*} color: number of the color choose
  */
 function lights(_req, _res, color) {
-  lightColor = color2Hex(color); // TODO: setear el color en el hardware
+  const lightColor = color2Hex(color);
+  exec(
+    `${lightsController} -c ${lightColor}`,
+    (_error, _stdout, _stderr) => {}
+  );
 }
 
 /**
@@ -145,8 +161,8 @@ function lights(_req, _res, color) {
 async function takePhoto(_req, res) {
   // read the image using fs and send the image content back in the response
   const myPhoto = path.resolve(__dirname, `photo.jpeg`);
-  exec("fswebcam -r 640x480 " + myPhoto, (_error, _stdout, _stderr) => {});
-  console.log("Photo taken");
+  exec('fswebcam -r 640x480' + myPhoto, (_error, _stdout, _stderr) => {});
+  console.log('Photo taken');
   await sleep(1500);
   res.sendFile(myPhoto);
 }
@@ -166,50 +182,51 @@ function sleep(ms) {
  * @return {*} hex: hexadecimal of the color
  */
 function color2Hex(color) {
-  let hex = 0x000000;
+  let hex = '000000';
   switch (color) {
-    case "0":
-      hex = 0x000000; // TODO: ver como apagar el color
-      console.log("Off");
+    case '0':
+      hex = '000000';
+      console.log('Off');
       break;
-    case "1":
-      hex = 0xff0000; // Red
-      console.log("Red");
+    case '1':
+      hex = 'ff0000'; // Red
+      console.log('Red');
       break;
-    case "2":
-      hex = 0x00ff00; // Green
-      console.log("Green");
+    case '2':
+      hex = '00ff00'; // Green
+      console.log('Green');
       break;
-    case "3":
-      hex = 0x0000ff; // Blue
-      console.log("Blue");
+    case '3':
+      hex = '0000ff'; // Blue
+      console.log('Blue');
       break;
-    case "4":
-      hex = 0xffff00; // Yellow
-      console.log("Yellow");
+    case '4':
+      hex = 'ffff00'; // Yellow
+      console.log('Yellow');
       break;
-    case "5":
-      hex = 0xffa500; // Orange
-      console.log("Orange");
+    case '5':
+      hex = 'ffa500'; // Orange
+      console.log('Orange');
       break;
-    case "6":
-      hex = 0x800080; // Purple
-      console.log("Purple");
+    case '6':
+      hex = '800080'; // Purple
+      console.log('Purple');
       break;
-    case "7":
-      hex = 0xffc0cb; // Pink
-      console.log("Pink");
+    case '7':
+      hex = 'ffc0cb'; // Pink
+      console.log('Pink');
       break;
-    case "8":
-      hex = 0xffffff; // White
-      console.log("White");
+    case '8':
+      hex = 'ffffff'; // White
+      console.log('White');
       break;
-    case "9":
-      hex = 0x00ffff; // Cyan
-      console.log("Cyan");
+    case '9':
+      hex = '00ffff'; // Cyan
+      console.log('Cyan');
       break;
     default:
-      console.log("Default");
+      hex = '000000';
+      console.log('Default');
       break;
   }
   return hex;
@@ -225,19 +242,18 @@ function color2Hex(color) {
 function readSensor() {
   const readDistance = exec(
     `${sensorController}`,
-    // eslint-disable-next-line no-unused-vars
     (_error, _stdout, _stderr) => {}
   );
-  readDistance.on("exit", code => {
+  readDistance.on('exit', code => {
     if (code === 1 && sensorLastState) {
       // If state is true, it's a new state
       console.log("You're too close, GET AWAY FROM ME!");
       // Get rebounce to send notifications from other server to phone
-      http.get("http://10.23.172.149:9090/", (res) => {}).on("error", (err) => {});
+      http.get('http://10.23.172.149:9090/', res => {}).on('error', err => {});
       sensorLastState = !sensorLastState;
     } else if (code === 0 && !sensorLastState) {
       // If state is false, it's a new state
-      console.log("Meh, not close enough");
+      console.log('Meh, not close enough');
       sensorLastState = !sensorLastState;
     }
   });
