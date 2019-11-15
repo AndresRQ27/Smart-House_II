@@ -161,7 +161,7 @@ function lights(_req, _res, color) {
 async function takePhoto(_req, res) {
   // read the image using fs and send the image content back in the response
   const myPhoto = path.resolve(__dirname, `photo.jpeg`);
-  exec('fswebcam -r 640x480' + myPhoto, (_error, _stdout, _stderr) => {});
+  exec('fswebcam -r 640x480 ' + myPhoto, (_error, _stdout, _stderr) => {});
   console.log('Photo taken');
   await sleep(1500);
   res.sendFile(myPhoto);
