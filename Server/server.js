@@ -182,54 +182,38 @@ function sleep(ms) {
  * @return {*} hex: hexadecimal of the color
  */
 function color2Hex(color) {
-  let hex = '000000';
   switch (color) {
-    case '0':
-      hex = '000000';
-      console.log('Off');
-      break;
     case '1':
-      hex = 'ff0000'; // Red
       console.log('Red');
-      break;
+      return 'ff0000'; // Red
     case '2':
-      hex = '00ff00'; // Green
       console.log('Green');
-      break;
+      return '00ff00'; // Green
     case '3':
-      hex = '0000ff'; // Blue
       console.log('Blue');
-      break;
+      return '0000ff'; // Blue
     case '4':
-      hex = 'ffff00'; // Yellow
       console.log('Yellow');
-      break;
+      return 'ffff00'; // Yellow
     case '5':
-      hex = 'ffa500'; // Orange
       console.log('Orange');
-      break;
+      return 'ffa500'; // Orange
     case '6':
-      hex = '800080'; // Purple
       console.log('Purple');
-      break;
+      return '800080'; // Purple
     case '7':
-      hex = 'ffc0cb'; // Pink
       console.log('Pink');
-      break;
+      return 'ffc0cb'; // Pink
     case '8':
-      hex = 'ffffff'; // White
       console.log('White');
-      break;
+      return 'ffffff'; // White
     case '9':
-      hex = '00ffff'; // Cyan
       console.log('Cyan');
-      break;
+      return '00ffff'; // Cyan
     default:
-      hex = '000000';
       console.log('Default');
-      break;
+      return '000000';
   }
-  return hex;
 }
 
 /**
