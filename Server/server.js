@@ -11,9 +11,9 @@ const http = require('http');
 // var for the user
 const hostname = '0.0.0.0';
 const port = 8080;
-const sensorController = 'distance'; // Executable for the GPIO
-const lightsController = 'lights';
-let alarmInterval;
+const sensorController = 'distance'; // Executable for the GPIO of the proximity sensor
+const lightsController = 'lights'; // Executable for the GPIO of the led lights
+const buzzerController = 'lock'; // Executable for the GPIO of the buzzer
 
 // Login parameters
 const admin = 'admin';
@@ -23,6 +23,8 @@ const adminPassword = '21232f297a57a5a743894a0e4a801fc3'; // MD5('admin')
 let alarmBool = false;
 let lockBool = false;
 let sensorLastState = true;
+let alarmInterval;
+let alarmBuzzer = false;
 
 app.use(function(_req, res, next) {
   res.header('Access-Control-Allow-Origin', '*');
@@ -78,7 +80,7 @@ function param(req, res) {
   } else if (typeof lock !== 'undefined') {
     toggleLock(req, res);
   } else if (typeof light !== 'undefined') {
-    lights(req, res, light);
+    lights(light);
   } else {
     console.log('Invalid param');
     res.sendStatus(400);
@@ -117,13 +119,19 @@ function toggleAlarm(_req, res) {
   res.json({
     state: alarmBool
   });
+
   if (alarmBool) {
     alarmInterval = setInterval((_req, res) => {
-      lights(_req, res, '1');
-      setTimeout(lights, 1000, _req, res, '0');
-    }, 2000);
+      // lights red - off
+      lights('1');
+      setTimeout(lights, 50, '0');
+
+      // buzzer on - off
+      buzzer();
+      setTimeout(buzzer, 50);
+    }, 100);
   } else {
-    clearInterval(alarmInterval);
+    clearInterval(alarmInterval); // Turns off the alarm
   }
 }
 
@@ -143,16 +151,56 @@ function toggleLock(_req, res) {
 
 /**
  * Function that sets the lights of a desired color
- * @param {*} req: request parameter
- * @param {*} res: response parameter
  * @param {*} color: number of the color choose
  */
-async function lights(_req, res, color) {
+async function lights(color) {
   const lightColor = color2Hex(color);
   exec(
     `${lightsController} -c ${lightColor}`,
     (_error, _stdout, _stderr) => {}
   );
+}
+
+/**
+ * Functions that toggles the alarm
+ * @param {*} state: int of the buzzer. 0 for off and 1 for on
+ */
+async function buzzer() {
+  alarmBuzzer = !alarmBuzzer;
+  let state = '0';
+  
+  if (alarmBuzzer) {
+    state = '1'; // Buzzer on
+    console.log('Buzzzz!');
+  }
+
+  exec(
+    `${buzzerController} -a ${state}`,
+    (_error, _stdout, _stderr) => {}
+  );
+}
+
+/**
+ * Function that read the proximity sensor and notifies if close
+ */
+function readSensor() {
+  const readDistance = exec(
+    `${sensorController}`,
+    (_error, _stdout, _stderr) => {}
+  );
+  readDistance.on('exit', code => {
+    if (code === 1 && sensorLastState) {
+      // If state is true, it's a 'new' state
+      console.log("You're too close, GET AWAY FROM ME!");
+      // Get rebounce to send notifications from other server to phone
+      http.get('http://10.23.172.149:9090/', res => {}).on('error', err => {});
+      sensorLastState = !sensorLastState;
+    } else if (code === 0 && !sensorLastState) {
+      // If state is false, it's a 'new' state
+      console.log('Meh, not close enough');
+      sensorLastState = !sensorLastState;
+    }
+  });
 }
 
 /**
@@ -167,15 +215,6 @@ async function takePhoto(_req, res) {
   console.log('Photo taken');
   await sleep(1500);
   res.sendFile(myPhoto);
-}
-
-/**
- * Function that sleeps for ms time
- * @param {*} ms: time to sleep
- * @return {*} promise of the timeout
- */
-function sleep(ms) {
-  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
@@ -196,10 +235,10 @@ function color2Hex(color) {
       return '0000ff'; // Blue
     case '4':
       console.log('Yellow');
-      return 'ffff00'; // Yellow
+      return 'ff8500'; // Yellow
     case '5':
       console.log('Orange');
-      return 'ffa500'; // Orange
+      return 'ff4000'; // Orange
     case '6':
       console.log('Purple');
       return '800080'; // Purple
@@ -219,30 +258,12 @@ function color2Hex(color) {
 }
 
 /**
- * Function that toggles the param of a room
- * @param {*} req:
- * @param {*} res:
- * @param {*} roomNumber:
- * @param {*} roomBool:
+ * Function that sleeps for ms time
+ * @param {*} ms: time to sleep
+ * @return {*} promise of the timeout
  */
-function readSensor() {
-  const readDistance = exec(
-    `${sensorController}`,
-    (_error, _stdout, _stderr) => {}
-  );
-  readDistance.on('exit', code => {
-    if (code === 1 && sensorLastState) {
-      // If state is true, it's a new state
-      console.log("You're too close, GET AWAY FROM ME!");
-      // Get rebounce to send notifications from other server to phone
-      http.get('http://10.23.172.149:9090/', res => {}).on('error', err => {});
-      sensorLastState = !sensorLastState;
-    } else if (code === 0 && !sensorLastState) {
-      // If state is false, it's a new state
-      console.log('Meh, not close enough');
-      sensorLastState = !sensorLastState;
-    }
-  });
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
 
 /**
